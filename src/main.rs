@@ -1,3 +1,7 @@
+use serde::{Serialize, Deserialize};
+use lambda_runtime::tower::service_fn;
+use tracing::{info, error};
+
 #[derive(Deserialize)]
 struct Request {
     pub body: String,
@@ -28,13 +32,13 @@ type Response = Result<SuccessResponse, FailureResponse>;
 
 #[tokio::main]
 async fn main() -> Result<(), lambda_runtime::Error> {
-    let func = handler_fn(handler);
+    let func = service_fn(handler);
     lambda_runtime::run(func).await?;
 
     Ok(())
 }
 
-async fn handler(req: Request, _ctx: lambda_runtime::Context) -> Response {
+async fn handler(req: lambda_runtime::LambdaEvent<Request>) -> Response {
     info!("handling a request...");
     let bucket_name = std::env::var("BUCKET_NAME")
         .expect("A BUCKET_NAME must be set in this app's Lambda environment variables.");
@@ -49,7 +53,7 @@ async fn handler(req: Request, _ctx: lambda_runtime::Context) -> Response {
     let _ = s3_client
         .put_object()
         .bucket(bucket_name)
-        .body(req.body.as_bytes().to_owned().into())
+        .body(req.payload.body.as_bytes().to_owned().into())
         .key(&filename)
         .content_type("text/plain")
         .send()
