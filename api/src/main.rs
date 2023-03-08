@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 use lambda_runtime::tower::service_fn;
 use tracing::{info, error};
+use aws_smithy_types::error::display::DisplayErrorContext;
 
 #[derive(Deserialize)]
 struct Request {
@@ -60,13 +61,11 @@ async fn handler(req: lambda_runtime::LambdaEvent<Request>) -> Response {
         .await
         .map_err(|err| {
             // In case of failure, log a detailed error to CloudWatch.
-            error!(
-                "failed to upload file '{}' to S3 with error: {}",
-                &filename, err
-            );
+            let message = format!("failed to upload file '{}' to S3 with error: {}", &filename, DisplayErrorContext(&err));
+            error!(message);
             // The sender of the request receives this message in response.
             FailureResponse {
-                body: "The lambda encountered an error and your message was not saved".to_owned(),
+                body: message,
             }
         })?;
 
