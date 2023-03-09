@@ -19,6 +19,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Get Lambda Runtime
+      run: pip3 install cargo-lambda
     - name: Build
       working-directory: ./api
       run: cargo lambda build --verbose --release --output-format zip
