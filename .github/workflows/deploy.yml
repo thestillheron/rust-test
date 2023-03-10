@@ -18,7 +18,7 @@ jobs:
           aws-region: ap-southeast-2
 
     - name: Deploy Preliminary CloudFormation stack
-      uses: aws-actions/aws-cloudformationk
+      uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
         stack-name: rust-test-prelim-stack
         template-file: ./iac/agent-dependencies.yaml 
@@ -44,7 +44,7 @@ jobs:
           SOURCE_DIR: 'target'
 
     - name: Deploy Resource CloudFormation stack
-      uses: aws-actions/aws-cloudformationk
+      uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
         stack-name: rust-test-resource-stack
         template-file: ./iac/resources.yaml 
