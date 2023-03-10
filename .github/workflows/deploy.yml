@@ -4,8 +4,32 @@ on:
   push:
     branches: [ "master" ]
 jobs:
-  deploy:
+  build:
+    runs-on: ubuntu-latest
 
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Get Lambda Runtime
+      run: pip3 install cargo-lambda
+
+    - name: Run tests
+      working-directory: ./api
+      run: cargo test --verbose
+
+    - name: Build
+      working-directory: ./api
+      run: cargo lambda build --verbose --release --output-format zip
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: rust-api-artifact
+        path: ./api/target/lambda/s3-sample/bootstrap.zip
+
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
