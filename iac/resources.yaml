@@ -21,6 +21,9 @@ Resources:
   RustTestLambda:
     Type: AWS::Lambda::Function
     Properties:
+      Handler: hello.handler
+      PackageType: Zip
+      Runtime: provided.al2
       FunctionName: rust-test-cloud-formation
       Description: My example rust lambda
       Architectures:
@@ -32,9 +35,6 @@ Resources:
       Environment:
         Variables:
           BUCKET_NAME: !Ref UserStorageBucket
-      Handler: hello.handler
-      PackageType: Zip
-      Runtime: provided.al2
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
