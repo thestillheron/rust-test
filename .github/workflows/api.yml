@@ -1,4 +1,4 @@
-name: Rust
+name: Build
 
 on:
   push:
@@ -18,12 +18,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Get Lambda Runtime
       run: pip3 install cargo-lambda
-    - name: Build
-      working-directory: ./api
-      run: cargo lambda build --verbose --release --output-format zip
+
     - name: Run tests
       working-directory: ./api
       run: cargo test --verbose
+
+    - name: Build
+      working-directory: ./api
+      run: cargo lambda build --verbose --release --output-format zip
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: rust-api-artifact
+        path: ./api/target/lambda/s3-sample/bootstrap.zip
+

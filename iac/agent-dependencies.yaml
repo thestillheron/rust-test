@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ArtifactBucketPrefix:
+    Description: The prefix that identifies the artifact bucket
+    Type: String
+Resources:
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${ArtifactBucketPrefix}.rust-test.thestillheron.com"
+      Tags:
+      - Key: project
+        Value: rust-test

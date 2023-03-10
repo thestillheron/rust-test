@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ArtifactBucketPrefix:
+    Description: The prefix that identifies the artifact bucket
+    Type: String
+  ZipPath:
+    Description: The path to the zip file for the test lambda
+    Type: String
+  UserStorageBucket:
+    Description: The name of the bucket to store user submissions
+    Default: user-storage.rust-test.thestillheron.com
+    Type: String
+Resources:
+  RustTestBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref UserStorageBucket
+      Tags:
+      - Key: project
+        Value: rust-test
+  RustTestLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: rust-test-cloud-formation
+      Description: My example rust lambda
+      Architectures:
+      - x86_64
+      Code:
+        # I don't like this - we're building too much of this name twice
+        S3Bucket: !Sub "${ArtifactBucketPrefix}.rust-test.thestillheron.com"
+        S3Key: !Ref ZipPath
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref UserStorageBucket
+          Handler: hello.handler
+      PackageType: Zip
+      Runtime: provided.al2
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Tags:
+      - Key: project
+        Value: rust-test
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: lambda-execution-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: S3ReadWritePolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - s3:GetObject
+            - s3:PutObject
+            Resource:
+            - Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - Ref: RustTestBucket
+                - "/*"

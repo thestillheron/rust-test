@@ -1,0 +1,55 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "master" ]
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
+
+    - name: Deploy Preliminary CloudFormation stack
+      uses: aws-actions/aws-cloudformationk
+      with:
+        stack-name: rust-test-prelim-stack
+        template-file: ./iac/agent-dependencies.yaml 
+        capabilities: CAPABILITIY_NAMED_IAM
+        parameter-overrides: |
+          ArtifactBucketPrefix=artifacts
+
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: rust-api-artifact
+        path: ./target/bootstrap.zip
+
+    - name: Upload artifact to S3
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --delete
+        env:
+          AWS_S3_BUCKET: artifacts.rust-test.thestillheron.com
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'ap-southeast-2'
+          SOURCE_DIR: 'target'
+
+    - name: Deploy Resource CloudFormation stack
+      uses: aws-actions/aws-cloudformationk
+      with:
+        stack-name: rust-test-resource-stack
+        template-file: ./iac/resources.yaml 
+        capabilities: CAPABILITIY_NAMED_IAM
+        parameter-overrides: |
+          ArtifactBucketPrefix=artifacts
+          ZipPath=bootstrap.zip
+
