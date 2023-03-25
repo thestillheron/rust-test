@@ -4,6 +4,9 @@ on:
   push:
     branches: [ "master" ]
 jobs:
+  checkout:
+    - uses: actions/checkout@v2
+
   paths-filter:
     runs-on: ubuntu-latest
     outputs:
@@ -18,14 +21,11 @@ jobs:
             - './api/**'
 
   build-api:
-    runs-on: ubuntu-latest
     needs: paths-filter
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/build-api.yaml
-        if: ${{ needs.paths-filter.outputs.output1 }}
-        with:
-          upload-artifact: true
+    uses: ./.github/workflows/build-api.yaml
+    if: ${{ needs.paths-filter.outputs.output1 }}
+    with:
+      upload-artifact: true
 
   deploy:
     needs: build-api
