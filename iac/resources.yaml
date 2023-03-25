@@ -68,3 +68,28 @@ Resources:
               - - 'arn:aws:s3:::'
                 - Ref: RustTestBucket
                 - "/*"
+  LambdaPublicUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      AuthType: NONE
+      TargetFunctionArn: 
+        Fn::GetAtt:
+        - RustTestLambda
+        - Arn
+      Cors:
+        AllowCredentials: false
+        AllowHeaders:
+          - Accept
+          - Content-Type
+        AllowMethods:
+          - GET
+          - PUT
+          - POST
+          - DELETE
+          - OPTIONS
+        # Change when we get a URL
+        AllowOrigins:
+          - '*'
+        ExposeHeaders:
+          - Content-Type
+        MaxAge: 86400
