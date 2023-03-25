@@ -19,10 +19,12 @@ jobs:
 
   build-api:
     needs: paths-filter
-    uses: ./.github/workflows/build-api.yaml
-    if: ${{ needs.paths-filter.outputs.output1 }}
-    with:
-      upload-artifact: true
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/workflows/build-api.yaml
+        if: ${{ needs.paths-filter.outputs.output1 }}
+        with:
+          upload-artifact: true
 
   deploy:
     needs: build
