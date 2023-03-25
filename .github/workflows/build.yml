@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  paths-filter:
+    runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.filter.outputs.api }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          api:
+            - './api/**'
+
+  build-api:
+    needs: paths-filter
+    uses: ./.github/workflows/build-api.yaml
+    if: ${{ needs.paths-filter.outputs.output1 }}
+    with:
+      upload-artifact: false

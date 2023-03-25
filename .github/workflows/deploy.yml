@@ -4,29 +4,25 @@ on:
   push:
     branches: [ "master" ]
 jobs:
-  build:
+  paths-filter:
     runs-on: ubuntu-latest
-
+    outputs:
+      output1: ${{ steps.filter.outputs.api }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Get Lambda Runtime
-      run: pip3 install cargo-lambda
-
-    - name: Run tests
-      working-directory: ./api
-      run: cargo test --verbose
-
-    - name: Build
-      working-directory: ./api
-      run: cargo lambda build --verbose --release --output-format zip
-    
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
+    - uses: actions/checkout@v2
+    - uses: dorny/paths-filter@v2
+      id: filter
       with:
-        name: rust-api-artifact
-        path: ./api/target/lambda/s3-sample/bootstrap.zip
+        filters: |
+          api:
+            - './api/**'
+
+  build-api:
+    needs: paths-filter
+    uses: ./.github/workflows/build-api.yaml
+    if: ${{ needs.paths-filter.outputs.output1 }}
+    with:
+      upload-artifact: true
 
   deploy:
     needs: build
