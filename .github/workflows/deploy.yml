@@ -5,7 +5,7 @@ on:
     branches: [ "master" ]
 jobs:
   checkout:
-    - uses: actions/checkout@v2
+    uses: actions/checkout@v2
 
   paths-filter:
     runs-on: ubuntu-latest
