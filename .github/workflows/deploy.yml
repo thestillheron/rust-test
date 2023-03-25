@@ -28,7 +28,7 @@ jobs:
           upload-artifact: true
 
   deploy:
-    needs: build
+    needs: build-api
     runs-on: ubuntu-latest
 
     steps:
