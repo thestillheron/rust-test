@@ -1,0 +1,38 @@
+name: Build API
+
+on:
+  workflow_call:
+    inputs:
+      upload-artifact:
+        required: false
+        type: bool
+        description: Upload the resulting artifact to make available for a deployment
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Get Lambda Runtime
+      run: pip3 install cargo-lambda
+
+    - name: Run tests
+      working-directory: ./api
+      run: cargo test --verbose
+      if: needs.paths-filter.outputs.output1 == 'true'
+
+    - name: Build
+      working-directory: ./api
+      run: cargo lambda build --verbose --release --output-format zip
+      if: needs.paths-filter.outputs.output1 == 'true'
+    
+    - name: Upload artifact
+      if: ${{ inputs.upload-artifact }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: rust-api-artifact
+        path: ./api/target/lambda/s3-sample/bootstrap.zip
