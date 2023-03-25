@@ -24,7 +24,7 @@ jobs:
 
   build-api:
     needs: paths-filter
-    uses: ./.github/workflows/build-api.yaml
+    uses: ./.github/workflows/build-api.yml
     if: ${{ needs.paths-filter.outputs.output1 }}
     with:
       upload-artifact: true
