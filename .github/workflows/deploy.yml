@@ -29,7 +29,7 @@ jobs:
     needs: paths-filter
     uses: ./.github/workflows/build-api.yml
     with:
-      build-needed: needs.paths-filter.outputs.output1 == 'true'
+      build-needed: needs.paths-filter.outputs.output1 == "true"
       upload-artifact: true
 
   deploy:
