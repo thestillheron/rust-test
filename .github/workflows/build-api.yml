@@ -3,6 +3,10 @@ name: Build API
 on:
   workflow_call:
     inputs:
+      build-needed:
+        required: false
+        type: boolean
+        default: true
       upload-artifact:
         required: false
         type: boolean
@@ -15,21 +19,25 @@ jobs:
 
     steps:
     - name: Checkout code
+      if: inputs.build-needed
       uses: actions/checkout@v3
 
     - name: Get Lambda Runtime
+      if: inputs.build-needed
       run: pip3 install cargo-lambda
 
     - name: Run tests
+      if: inputs.build-needed
       working-directory: ./api
       run: cargo test --verbose
 
     - name: Build
+      if: inputs.build-needed
       working-directory: ./api
       run: cargo lambda build --verbose --release --output-format zip
     
     - name: Upload artifact
-      if: ${{ inputs.upload-artifact }}
+      if: ${{ inputs.upload-artifact && inputs.build-needed }}
       uses: actions/upload-artifact@v2
       with:
         name: rust-api-artifact
