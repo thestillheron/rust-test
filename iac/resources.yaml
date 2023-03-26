@@ -82,11 +82,7 @@ Resources:
           - Accept
           - Content-Type
         AllowMethods:
-          - GET
-          - PUT
-          - POST
-          - DELETE
-          - OPTIONS
+          - '*'
         # Change when we get a URL
         AllowOrigins:
           - '*'
