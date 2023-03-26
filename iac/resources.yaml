@@ -69,7 +69,7 @@ Resources:
                 - Ref: RustTestBucket
                 - "/*"
   RustTestApiGateway:
-    Type: AWS::ApiGateway::RustTestApi
+    Type: AWS::ApiGateway::RestApi
     Properties:
       Name: rust-test-gateway
   RustTestApiGateweayResource:
