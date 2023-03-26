@@ -23,12 +23,10 @@ jobs:
     - name: Run tests
       working-directory: ./api
       run: cargo test --verbose
-      if: needs.paths-filter.outputs.output1 == 'true'
 
     - name: Build
       working-directory: ./api
       run: cargo lambda build --verbose --release --output-format zip
-      if: needs.paths-filter.outputs.output1 == 'true'
     
     - name: Upload artifact
       if: ${{ inputs.upload-artifact }}

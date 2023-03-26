@@ -2,13 +2,16 @@ name: Deploy
 
 on:
   push:
+    workflow_dispatch:
+      inputs:
+        force-build:
+          description: Forces artifacts to be built even if files haven't changed
+          type: boolean
+          required: false
+          default: false
     branches: [ "master" ]
-jobs:
-  checkout:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
 
+jobs:
   paths-filter:
     runs-on: ubuntu-latest
     outputs:
@@ -25,7 +28,7 @@ jobs:
   build-api:
     needs: paths-filter
     uses: ./.github/workflows/build-api.yml
-    if: ${{ needs.paths-filter.outputs.output1 }}
+    if: needs.paths-filter.outputs.output1 || github.event.inputs.force-build
     with:
       upload-artifact: true
 
