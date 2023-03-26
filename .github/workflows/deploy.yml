@@ -28,7 +28,7 @@ jobs:
   build-api:
     needs: paths-filter
     uses: ./.github/workflows/build-api.yml
-    if: needs.paths-filter.outputs.output1 != '[]' || github.event.inputs.force-build
+    if: false # needs.paths-filter.outputs.output1 != '[]' || github.event.inputs.force-build
     with:
       upload-artifact: true
 
