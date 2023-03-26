@@ -78,7 +78,7 @@ Resources:
       ParentId: !GetAtt RustTestApiGateway.RootResourceId
       PathPart: api
       RestApiId: !Ref RustTestApiGateway
-  MyApiGatewayMethod:
+  RustTestApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       HttpMethod: ANY
@@ -92,6 +92,8 @@ Resources:
         - StatusCode: 200
   RustTestApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - RustTestApiMethod
     Properties:
       RestApiId: !Ref RustTestApiGateway
       StageName: prod
