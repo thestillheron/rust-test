@@ -68,6 +68,40 @@ Resources:
               - - 'arn:aws:s3:::'
                 - Ref: RustTestBucket
                 - "/*"
+  RustTestApiGateway:
+    Type: AWS::ApiGateway::RustTestApi
+    Properties:
+      Name: rust-test-gateway
+  RustTestApiGateweayResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt RustTestApiGateway.RootResourceId
+      PathPart: api
+      RestApiId: !Ref RustTestApiGateway
+  MyApiGatewayMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: ANY
+      ResourceId: !Ref RustTestApiGateweayResource
+      RestApiId: !Ref RustTestApiGateway
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RustTestLambda.Arn}/invocations"
+      MethodResponses:
+        - StatusCode: 200
+  RustTestApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref RustTestApiGateway
+      StageName: prod
+  RustTestApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref RustTestLambda
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RustTestApiGateway}/*/ANY/api"
   LambdaPublicUrl:
     Type: AWS::Lambda::Url
     Properties:
