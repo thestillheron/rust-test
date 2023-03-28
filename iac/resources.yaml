@@ -68,6 +68,8 @@ Resources:
               - - 'arn:aws:s3:::'
                 - Ref: RustTestBucket
                 - "/*"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   RustTestApiGateway:
     Type: AWS::ApiGateway::RestApi
     Properties:
