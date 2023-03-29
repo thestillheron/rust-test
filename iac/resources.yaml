@@ -84,7 +84,7 @@ Resources:
   ApiGatewayAccountConfiguration:
     Type: "AWS::ApiGateway::Account"
     Properties:
-      CloudWatchRoleArn: !GetAtt ApiGatewayLoggingRole.Arn
+      CloudWatchRoleArn: !GetAtt ApiGatewayExecutionRole.Arn
   ApiGatewayExecutionRole:
     Type: AWS::IAM::Role
     Properties:
