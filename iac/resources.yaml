@@ -106,6 +106,19 @@ Resources:
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RustTestLambda.Arn}/invocations"
       MethodResponses:
         - StatusCode: 200
+  RustTestApiGatewayStage:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - RustTestApiMethod
+    Properties:
+      RestApiId: !Ref RustTestApiGateway
+      StageName: prod
+      DeploymentId: !Ref RustTestApiGatewayDeployment
+      Description: prod stage
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*"
+          LoggingLevel: INFO
   RustTestApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
     DependsOn:
