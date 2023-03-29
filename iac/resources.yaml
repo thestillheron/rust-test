@@ -10,17 +10,17 @@ Parameters:
     Description: The name of the bucket to store user submissions
     Default: user-storage.rust-test.thestillheron.com
     Type: String
-Outputs:
-  RootUrl:
-    Description: Root url of the API ApiGateway
-    Value: 
-      - Fn::Join:
-        - ''
-        - - 'https://'
-          - !Ref RustTestApiGateway
-          - '.execute-api.'
-          - ${AWS::Region}
-          - '.amazonaws.com'
+      # Outputs:
+      #   RootUrl:
+      #     Description: Root url of the API ApiGateway
+      #     Value: 
+      #       - Fn::Join:
+      #         - ''
+      #         - - 'https://'
+      #           - !Ref RustTestApiGateway
+      #           - '.execute-api.'
+      #           - ${AWS::Region}
+      #           - '.amazonaws.com'
 Resources:
   RustTestBucket:
     Type: AWS::S3::Bucket
