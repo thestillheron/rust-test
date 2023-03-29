@@ -119,13 +119,6 @@ Resources:
         - ResourcePath: "/*"
           HttpMethod: "*"
           LoggingLevel: INFO
-  RustTestApiGatewayDeployment:
-    Type: AWS::ApiGateway::Deployment
-    DependsOn:
-      - RustTestApiMethod
-    Properties:
-      RestApiId: !Ref RustTestApiGateway
-      StageName: prod
   RustTestApiGatewayPermission:
     Type: AWS::Lambda::Permission
     Properties:
