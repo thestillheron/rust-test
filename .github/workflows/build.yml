@@ -11,7 +11,10 @@ jobs:
     outputs:
       output1: ${{ steps.filter.outputs.api }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    - name: Check sha
+      run: git log
+      shell: bash
     - uses: dorny/paths-filter@v2
       id: filter
       with:
