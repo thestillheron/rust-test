@@ -17,7 +17,7 @@ jobs:
         with:
           ref: ${{ github.events.inputs.branchName || github.events.payload.ref }}
       - shell: bash
-        name: Log sha
+        name: Log branch name
         run: echo ${{ github.events.inputs.branchName }}
       - shell: bash
         name: Log sha
